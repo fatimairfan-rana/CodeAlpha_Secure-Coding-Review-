@@ -1,0 +1,4 @@
+Flask>=3.0
+bandit>=1.7
+pip-audit>=2.7
+# Semgrep alag install karein: pip install semgrep  (ya pipx install semgrep)
