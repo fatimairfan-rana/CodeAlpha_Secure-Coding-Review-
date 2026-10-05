@@ -4,9 +4,21 @@
 
 This project was developed as part of the **CodeAlpha Cyber Security Internship — Task 1: Basic Network Sniffer**.
 
-The objective of this project is to build a Python-based network sniffer capable of capturing and analyzing network packets using the **Scapy** library.
+The objective of this project is to build a Python-based network sniffer capable of capturing and analyzing live network packets using the **Scapy** library.
 
-The sniffer displays useful packet information such as source and destination IP addresses, protocols, ports, packet size, TCP flags, DNS queries, TTL/Hop Limit values, and payload previews.
+The sniffer displays useful packet information such as:
+
+* Source and destination IP addresses
+* Network protocols
+* Source and destination ports
+* Packet size
+* TCP flags
+* ARP requests and replies
+* DNS queries
+* TTL / Hop Limit values
+* Payload previews in ASCII and hexadecimal format
+
+The project is designed for educational purposes and authorized network analysis.
 
 ---
 
@@ -20,9 +32,9 @@ The sniffer displays useful packet information such as source and destination IP
 * Analyze TCP flags.
 * Identify ARP requests and replies.
 * Detect DNS queries.
-* Display packet payload previews in ASCII and hexadecimal format.
+* Display limited packet payload previews.
 * Save captured traffic to a `.pcap` file for further analysis in Wireshark.
-* Understand how data flows between local systems and remote servers.
+* Understand basic network communication between local systems and remote servers.
 
 ---
 
@@ -53,9 +65,11 @@ sniff(
 
 Packets can be captured until `Ctrl+C` is pressed or until a specified packet count is reached.
 
+---
+
 ### 2. Protocol Detection
 
-The sniffer identifies several protocols, including:
+The sniffer can identify and analyze several common protocols, including:
 
 * ARP
 * IPv4
@@ -66,6 +80,8 @@ The sniffer identifies several protocols, including:
 * DNS
 * HTTP
 * HTTPS/TLS traffic indicators
+
+---
 
 ### 3. IP Address Analysis
 
@@ -87,6 +103,8 @@ Protocol      : TCP
 TTL            : 128
 ```
 
+---
+
 ### 4. Port Analysis
 
 For TCP and UDP packets, the program displays source and destination ports.
@@ -94,10 +112,12 @@ For TCP and UDP packets, the program displays source and destination ports.
 Example:
 
 ```text
-Ports: 56124 -> 443
+Ports         : 56124 -> 443
 ```
 
 Port `443` is commonly associated with encrypted web traffic.
+
+---
 
 ### 5. TCP Flag Analysis
 
@@ -113,12 +133,16 @@ The program converts TCP flags into readable names such as:
 Example:
 
 ```text
-TCP Flags: PSH,ACK
+TCP Flags     : PSH,ACK
 ```
+
+TCP flags provide information about the state and behavior of TCP connections.
+
+---
 
 ### 6. ARP Analysis
 
-ARP packets are separately analyzed to show:
+ARP packets are separately analyzed to display:
 
 ```text
 ARP Request / Reply
@@ -132,46 +156,75 @@ Example:
 
 ```text
 Protocol : ARP (Request)
-Sender   : 192.168.0.21 (60:22:32:53:00:dc)
-Target   : 192.168.0.88 (00:00:00:00:00:00)
+Sender   : 192.168.0.21
+Target   : 192.168.0.88
 ```
 
-### 7. DNS Query Detection
-
-The sniffer can identify DNS queries and display the queried domain/service name.
-
-Example:
-
-```text
-DNS Query: _ndi._tcp.local.
-```
-
-### 8. Payload Preview
-
-When a packet contains a `Raw` layer, the program displays a limited payload preview in both readable ASCII and hexadecimal format.
-
-Example:
-
-```text
-Payload: .........p........2..I[.....eY.
-hex: 170303001abaf6df11700cb388928be3a0e232abbc495bf816deedc56559d8
-```
-
-Payload output is intentionally limited to a small preview rather than dumping complete packet contents.
+ARP is used on local networks to resolve IPv4 addresses to MAC addresses.
 
 ---
 
-# ⚙️ Installation
+### 7. DNS Query Detection
 
-## 1. Install Python
+The sniffer can detect DNS queries and display the queried domain name.
 
-Verify Python is installed:
+Example:
+
+```text
+DNS Query     : google.com.
+```
+
+DNS normally uses UDP port `53` for standard DNS queries.
+
+The project was also tested with multicast DNS (mDNS), which commonly uses UDP port `5353` and multicast address `224.0.0.251`.
+
+Example:
+
+```text
+Ports         : 5353 -> 5353
+DNS Query     : _ndi._tcp.local.
+```
+
+This represents local service discovery traffic associated with mDNS.
+
+---
+
+### 8. Payload Preview
+
+When a packet contains a `Raw` layer, the program displays a limited payload preview in:
+
+* ASCII format
+* Hexadecimal format
+
+Example:
+
+```text
+Payload       : .........p........2..I[.....eY.
+
+hex: 170303001abaf6df11700cb388928be3a0e232abbc495bf816deedc56559d8
+```
+
+The payload output is intentionally limited to a small preview instead of displaying complete packet contents.
+
+Encrypted traffic may appear as unreadable binary/hexadecimal data because the application payload is protected by encryption.
+
+---
+
+## ⚙️ Installation
+
+### 1. Install Python
+
+Verify that Python is installed:
 
 ```bash
 python --version
 ```
 
-## 2. Install Scapy
+---
+
+### 2. Install Scapy
+
+Install Scapy using pip:
 
 ```bash
 pip install scapy
@@ -191,7 +244,7 @@ Scapy OK
 
 ---
 
-# 🚀 Usage
+## 🚀 Usage
 
 Run the sniffer with:
 
@@ -211,9 +264,7 @@ to stop packet capture.
 
 ---
 
-# 🔧 Command-Line Options
-
-The program supports several command-line arguments.
+## 🔧 Command-Line Options
 
 ### Specify Network Interface
 
@@ -253,31 +304,29 @@ python network_sniffer.py -f "host 8.8.8.8"
 python network_sniffer.py -c 100 -w capture.pcap
 ```
 
-The resulting `.pcap` file can be opened in **Wireshark** for deeper analysis.
+The resulting `.pcap` file can be opened in **Wireshark** for deeper packet analysis.
 
 ---
 
-# 📊 Test Results
+## 📊 Test Results
 
-The sniffer was successfully tested against live network traffic.
+The sniffer was successfully tested against live network traffic in a local test environment.
 
 During one capture session, the program recorded:
 
 ```text
 Total packets captured: 136
 
-UDP     : 70
-ARP     : 31
-HTTPS   : 26
-TCP     : 4
-DNS     : 3
+UDP      : 70
+ARP      : 31
+HTTPS    : 26
+TCP      : 4
+DNS      : 3
 ```
 
-The captured traffic included:
+The captured traffic included ARP, TCP, UDP, HTTPS, and DNS/mDNS-related traffic.
 
 ### ARP
-
-The sniffer detected ARP requests from devices on the local network.
 
 Example:
 
@@ -287,9 +336,7 @@ Sender   : 192.168.0.21
 Target   : 192.168.0.88
 ```
 
-### TCP
-
-TCP traffic was detected between the local system and remote servers.
+### TCP/HTTPS
 
 Example:
 
@@ -300,9 +347,9 @@ Ports         : 56124 -> 443
 TCP Flags     : PSH,ACK
 ```
 
-### UDP
+TCP port `443` was identified as HTTPS traffic by the sniffer.
 
-UDP traffic was also observed, including traffic using destination port `443`.
+### UDP
 
 Example:
 
@@ -312,24 +359,22 @@ Destination IP: 142.250.200.174
 Ports         : 63963 -> 443
 ```
 
-UDP/443 traffic can be associated with modern encrypted protocols such as **QUIC/HTTP/3**.
+UDP traffic using port `443` can be associated with modern encrypted protocols such as **QUIC/HTTP/3**.
 
 ### DNS / mDNS
-
-DNS-related traffic was observed on port `5353`.
 
 Example:
 
 ```text
-Ports     : 5353 -> 5353
-DNS Query : _ndi._tcp.local.
+Ports         : 5353 -> 5353
+DNS Query     : _ndi._tcp.local.
 ```
 
-This represents local service discovery traffic commonly associated with **mDNS**.
+This represents multicast DNS (mDNS) service discovery traffic.
 
 ---
 
-# 🔐 Security and Privacy Considerations
+## 🔐 Security and Privacy Considerations
 
 Network sniffing can expose sensitive network information.
 
@@ -341,48 +386,62 @@ This tool should only be used on:
 
 Do not capture or inspect network traffic belonging to other users or systems without permission.
 
-The project was developed for **educational and authorized cybersecurity testing purposes**.
+This project was developed for **educational and authorized cybersecurity testing purposes**.
 
 ---
 
-# 🧠 Key Learning Outcomes
+## 🧠 Key Learning Outcomes
 
 Through this project, I gained practical experience with:
 
 * Network packet capture
-* Packet structure and layers
+* Packet structure and network layers
 * IPv4 and IPv6 traffic
 * ARP communication
 * TCP and UDP protocols
-* TCP flags
+* TCP flag analysis
 * Port analysis
-* DNS/mDNS traffic
+* DNS and mDNS traffic
 * Payload representation
 * Encrypted network traffic
 * Python-based network analysis
-* Scapy packet manipulation and inspection
-* PCAP generation for Wireshark analysis
+* Scapy packet inspection
+* PCAP generation
+* Wireshark-based packet analysis
 
 ---
 
-# 📸 Project Evidence
+## 📸 Project Evidence
 
 Screenshots demonstrating the working network sniffer are included in the `screenshots` directory.
 
-Recommended evidence:
+### 1. Network Sniffer Running
 
-```text
-screenshots/
-├── sniffer_running.png
-├── arp_packets.png
-├── tcp_packets.png
-├── udp_packets.png
-└── dns_packets.png
-```
+![Network Sniffer Running](screenshots/01_sniffer_running.png)
+
+### 2. ARP Packet Analysis
+
+![ARP Packet Analysis](screenshots/02_arp_packets.png)
+
+### 3. TCP/HTTPS Packet Analysis
+
+![TCP HTTPS Packet Analysis](screenshots/03_tcp_https.png)
+
+### 4. UDP Packet Analysis
+
+![UDP Packet Analysis](screenshots/04_udp_packets.png)
+
+### 5. DNS Query Detection
+
+![DNS Query Detection](screenshots/05_dns_query.png)
+
+### 6. Capture Summary
+
+![Capture Summary](screenshots/06_capture_summary.png)
 
 ---
 
-# 📁 Project Structure
+## 📁 Project Structure
 
 ```text
 CodeAlpha_Task1/
@@ -391,16 +450,17 @@ CodeAlpha_Task1/
 ├── README.md
 │
 └── screenshots/
-    ├── sniffer_running.png
-    ├── arp_packets.png
-    ├── tcp_packets.png
-    ├── udp_packets.png
-    └── dns_packets.png
+    ├── 01_sniffer_running.png
+    ├── 02_arp_packets.png
+    ├── 03_tcp_https.png
+    ├── 04_udp_packets.png
+    ├── 05_dns_query.png
+    └── 06_capture_summary.png
 ```
 
 ---
 
-# 👩‍💻 Internship Task
+## 👩‍💻 Internship Task
 
 **Program:** CodeAlpha Cyber Security Internship
 
@@ -414,4 +474,8 @@ CodeAlpha_Task1/
 
 ## ⚠️ Note
 
-The packet output shown in this project represents traffic captured from the local test environment. Payloads from encrypted connections are not expected to reveal readable application content because encryption protects the transmitted data.
+The packet output shown in this project represents traffic captured from a local test environment.
+
+Payloads from encrypted connections are not expected to reveal readable application content because encryption protects the transmitted data.
+
+This project is intended for educational and authorized network security testing only.
